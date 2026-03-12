@@ -1,13 +1,15 @@
 """Base types for the Mellea plugin system."""
 
 from __future__ import annotations
-
+import logging 
 from dataclasses import dataclass
 from datetime import UTC, datetime, timezone
 from types import TracebackType
 from typing import TYPE_CHECKING, Any, TypeAlias
 
 from pydantic import Field
+
+logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Plugin base class (no cpex dependency)
@@ -118,6 +120,7 @@ except ImportError:
         """Fallback frozen base when cpex is not installed."""
 
         model_config = {"frozen": True}
+    logger.warning("cpex not installed, falling back to stub PluginPayload")
 
     _HAS_PLUGIN_FRAMEWORK = False
 
@@ -243,7 +246,7 @@ else:
         def __init__(self, *args: Any, **kwargs: Any) -> None:  # noqa: D107
             raise ImportError(
                 "MelleaPlugin requires the ContextForge plugin framework. "
-                "Install it with: pip install 'mellea[contextforge]'"
+                "Install it with: pip install 'mellea[hooks]'"
             )
 
     # Provide an alias when the plugin framework is not installed.
